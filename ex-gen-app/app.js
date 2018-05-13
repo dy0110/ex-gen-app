@@ -8,7 +8,7 @@ var session = require('express-session');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-//ハローページ
+//hello.js
 var hello = require('./routes/hello');
 //express-sessionの利用
 var session_opt = {
@@ -17,6 +17,9 @@ var session_opt = {
   saveUninitialized: false,
   cookie: { maxAge: 60 * 60 * 1000}
 }
+
+//ajax.js
+var ajax = require('./routes/ajax')
 
 var app = express();
 
@@ -35,6 +38,8 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 //hello.ejs
 app.use('/hello', hello);
+//ajax.js
+app.use('/ajax',ajax);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
