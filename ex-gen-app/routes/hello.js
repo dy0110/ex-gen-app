@@ -4,9 +4,13 @@ var router = express.Router();
 
 //表示部分の作製
 router.get('/',(req,res,next) => {
+    //クエリーパラメータ
+    var name = req.query.name;
+    var mail = req.query.mail;
+
     var data =  {
         title : "Hello World !",
-        content : "テストメッセージ<br>This is Test message."
+        content : "あなたの名前は" + name + "<br>" + "あなたのメールアドレスは" + mail 
     };
     res.render('hello',data);
 });
