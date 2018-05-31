@@ -2,31 +2,28 @@
 var express = require('express');
 var router = express.Router();
 
+//sqliteモジュールのロード
+var sqlite3 = require('sqlite3');
+
+//dbオブジェクトの取得
+var db = new sqlite3.Database('mydb.db');
+
 //getリクエスト
 router.get('/',(req,res,next) => {
-    var msg = "※入力して送信";
-    //セッションがあればそれを表示
-    if( req.session.message != undefined){
-        msg = "Last Message: " + req.session.message
-    }
-    //値の書き出し
-    var data =  {
-        title : "Hello !",
-        content : msg
-    };
-    res.render('hello',data);
-});
-
-//postリクエスト
-router.post('/post',(req,res,next) => {
-    var msg = req.body.message;
-    //セッションに入力した値を保存して表示
-    req.session.message = msg;
-    var data = {
-        title : "Hello !",
-        content: "Last Message: " + req.session.message
-    };
-    res.render('hello' , data)
+    //dbのシリアライズ
+    db.serialize( () => {
+        //レコードの取り出し
+        db.all("SELECT * FROM mydata ",(err,rows) => {
+            //DBアクセス完了時の処理
+            if(!err) {
+                var data = {
+                    title: 'Hello!',
+                    content: rows
+                }
+                res.render('hello',data);
+            }
+        });
+    });
 });
 
 module.exports = router;

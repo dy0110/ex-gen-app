@@ -7,43 +7,31 @@
     <script src="/javascripts/jquery.min.js"></script>
     <title><%=title %></title>
     <!-- <link rel="stylesheet" href="/stylesheet/style.css"> -->
-    <script>
-        $(document).ready(
-            function(){
-                //クリックイベントでajaxを使う
-                $('#btn').click(
-                    function(){
-                        var n = $('#num').val();
-                        //入力された番号を表示
-                        $.getJSON("/ajax?id=" + n,function(json){
-                            var msg = '<table>' + 
-                                    '<tr><th>名前</th>' +
-                                    '<td>' + json.name + '</td></tr>' +
-                                    '<tr><th>年齢</th>' +
-                                    '<td>' + json.age + '</td></tr>' +
-                                    '<tr><th>メール</th>' +
-                                    '<td>' + json.mail + '</td></tr>' +
-                                    '</table>';
-                            $('#msg').html(msg);
-                        });
-                    }
-                );
-            }
-        );
-    </script>
 </head>
 <body>
     <head>
         <h1><%=title %></h1>
     </head>
     <div role="main">
-        <p id="msg">
-            <%- content %>
-        </p>
-        <form method="post" action="/hello/post">
-            <input type="text" name="num" id="num">
-            <input type="button" value="GET!" id="btn">
-        </form>
+        <table>
+            <% for (var i in content ){ %>
+                <tr>
+                    <% var obj = content[i]; %>
+                    <th>
+                        <%= obj.id %>
+                    </th>
+                    <td>
+                        <%= obj.name %>
+                    </td>
+                    <td>
+                        <%= obj.mail %>
+                    </td>
+                    <td>
+                        <%= obj.age %>
+                    </td>
+                </tr>
+                <% } %>
+        </table>
     </div>
 </body>
 </html>
