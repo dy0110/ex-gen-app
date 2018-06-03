@@ -45,4 +45,24 @@ router.post('/add', (req,res,next) => {
     res.redirect('/hello');
 });
 
+//getリクエスト(show)
+router.get('/show',(req,res,next) => {
+    var id = req.query.id;
+    db.serialize(() => {
+        //レコードの取り出し
+        var q = "SELECT * FROM mydata WHERE id = ?";
+        db.get(q,[id],(error,row) => {
+            if(!error){
+                var data = {
+                    title:'Hello/show',
+                    content:'id = '+id+' のレコード',
+                    mydata: row
+                }
+                //取り出した値を表示
+                res.render('hello/show',data);
+            }
+        });
+    });
+});
+
 module.exports = router;

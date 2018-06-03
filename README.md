@@ -6,4 +6,5 @@ express-generator-test
 5.Express-sessionの利用  
 6.ajaxの利用  
 7.sqliteとの連係  
-8.insert処理
+8.insert処理  
+9.1レコード取り出して表示
