@@ -5,3 +5,5 @@ express-generator-test
 4.フォーム送信  
 5.Express-sessionの利用  
 6.ajaxの利用  
+7.sqliteとの連係  
+8.insert処理
