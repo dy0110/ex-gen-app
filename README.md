@@ -1,4 +1,4 @@
-express-generator-test
+express-generator-test  
 1.パッケージのインストール  
 2.Helloページの追加  
 3.クエリーパラメータの利用  
@@ -9,3 +9,4 @@ express-generator-test
 8.insert処理(INSERT)  
 9.1レコード取り出して表示(SELECT)  
 10.レコードの編集(UPDATE)  
+11.レコードの削除(DELETE)
