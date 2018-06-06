@@ -21,6 +21,9 @@ var session_opt = {
 //ajax.js
 var ajax = require('./routes/ajax')
 
+//express-validator
+var validator = require('express-validator');
+
 var app = express();
 
 // view engine setup
@@ -40,6 +43,8 @@ app.use('/users', usersRouter);
 app.use('/hello', hello);
 //ajax.js
 app.use('/ajax',ajax);
+//express-validator
+app.use(validator());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

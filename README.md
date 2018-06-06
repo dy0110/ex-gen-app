@@ -9,4 +9,5 @@ express-generator-test
 8.insert処理(INSERT)  
 9.1レコード取り出して表示(SELECT)  
 10.レコードの編集(UPDATE)  
-11.レコードの削除(DELETE)
+11.レコードの削除(DELETE)  
+12.express-validation の 利用　 
