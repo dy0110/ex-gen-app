@@ -10,4 +10,5 @@ express-generator-test
 9.1レコード取り出して表示(SELECT)  
 10.レコードの編集(UPDATE)  
 11.レコードの削除(DELETE)  
-12.express-validation の 利用　 
+12.express-validation の利用  
+13.sanitize の利用

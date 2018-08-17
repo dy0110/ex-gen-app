@@ -7,26 +7,44 @@ var sqlite3 = require('sqlite3');
 
 //dbオブジェクトの取得
 var db = new sqlite3.Database('mydb.db');
+//knexオブジェクトのロード
+var knex = require('knex')({
+    dialect: 'sqlite3',
+    connection: {
+        filename: 'mydb.db'
+    },
+    useNullAsDefault: true //sqliteの時のみ
+});
+
+//Bookshelfのロード
+var Bookshelf = require('bookshelf')(knex);
+
+//モデル(データベースへアクセスするためのオブジェクト)
+var MyData = Bookshelf.Model.extend({
+    tableName: 'mydata'
+})
 
 //express-validater
 var { check, validationResult } = require('express-validator/check');
 
 //getリクエスト(index)
 router.get('/',(req,res,next) => {
-    //dbのシリアライズ
-    db.serialize( () => {
-        //レコードの取り出し
-        db.all("SELECT * FROM mydata ",(err,rows) => {
-            //DBアクセス完了時の処理
-            if(!err) {
-                var data = {
-                    title: 'Hello!',
-                    content: rows
-                }
-                res.render('hello/index',data);
+    //
+    new MyData().fetchAll().then( ( collection ) => {
+        console.log( collection.toJSON() )
+        var data = {
+            title: 'Hello!',
+            content: collection.toJSON()
+        };
+        res.render( 'hello/index', data );
+    } ).catch( (error) => {
+        res.status(500).json({
+            error: true,
+            data: {
+                message: error.message
             }
-        });
-    });
+        })
+    } );
 });
 
 //getリクエスト(add)
@@ -43,59 +61,18 @@ router.get('/add', (req,res,next) => {
 });
 
 //postリクエスト(add)
-router.post('/add',[
-    check('name','NAME は必ず入力してください').isLength({min:1}),
-    check('mail','MAIL は必ずメールアドレスを入力してください').isEmail(),
-    check('age','age は数字を入力してください').isInt()
-], (req,res) => {
+router.post('/add', (req, res, next) => {
     var response = res;
-    var errors = validationResult(req);
-    if(!errors.isEmpty()){
-        //var res = ' <ul class="error"> ';
-        var result_arr = errors.array();
-        var name_error = result_arr[0].msg;
-        var mail_error  = result_arr[1].msg;
-        var age_error = result_arr[2].msg;
-        var data = {
-            title:'Hello/Add',
-            content:"",
-            name_error:name_error,
-            mail_error :mail_error,
-            age_error:age_error,
-            form:req.body
-        }
-        response.render('hello/add',data);
-    } else {
-        var nm = req.body.name;
-        var ml = req.body.mail;
-        var ag = req.body.age;
-        //dbへのインサート
-        db.run('insert into mydata (name , mail, age) values ( ?, ?, ? )',nm,ml,ag);
-        res.redirect('/hello');
-    }
-    // req.getValidationResult().then((result) => {
-    //     if(!result.isEmpty()){
-    //         var res = '<ul class="error">';
-    //         var result_arr = result.array();
-    //         for(var n in result_arr){
-    //             res += '<li>' + result_arr[n].msg + '</li>'
-    //         }
-    //         res += '</ul>';
-    //         var data = {
-    //             title:'Hello/Add',
-    //             content:res,
-    //             form:req.body
-    //         }
-    //         response.render('hello/add',data);
-    //     } else {
-    //         var nm = req.body.name;
-    //         var ml = req.body.mail;
-    //         var ag = req.body.age;
-    //         //dbへのインサート
-    //         db.run('insert into mydata (name , mail, age) values ( ?, ?, ? )',nm,ml,ag);
-    //         res.redirect('/hello');
-    //     }
-    // });
+    //余分なデータを取り除く
+    var body = req.body;
+    var save_data = {}
+    save_data.name = body.name;
+    save_data.mail = body.mail;
+    save_data.age = body.age;
+    //保存
+    new MyData( save_data ).save( ).then( (model) => {
+        response.redirect('/hello');
+    } );
 });
 
 //getリクエスト(show)
@@ -172,5 +149,34 @@ router.post('/delete',(req,res,next) => {
     db.run(q,id);
     res.redirect('/hello');
 });
+
+//getリクエスト(find)
+router.get( '/find', ( req, res, next ) => {
+    var fstr = {
+        fstr : ''
+    }
+    var data = {
+        title: '/Hello/Find',
+        content: '検索IDを入力: ',
+        form: fstr ,
+        mydata: null
+    };
+    console.log( data.form.fstr)
+    res.render( 'hello/find', data );
+} );
+
+//postリクエスト
+router.post( '/find', ( req, res, next ) => {
+    new MyData().where( 'id', '=', req.body.fstr )
+        .fetch().then( (collection) => {
+            var data = {
+                title: "Hello!",
+                content: '*ID = ' + req.body.fstr + ' の検索結果: ',
+                form: req.body,
+                mydata: collection.toJSON()
+            }
+            res.render( "hello/find", data );
+        } )
+} );
 
 module.exports = router;
