@@ -12,3 +12,5 @@ express-generator-test
 11.レコードの削除(DELETE)  
 12.express-validation の利用  
 13.sanitize の利用
+14.knexとBookShelf 
+15.ページネーション
